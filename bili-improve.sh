@@ -205,7 +205,7 @@ for ((index = length - 1; index >= 0; index--)); do
                             #发送通知
                             echo "Title: "${title}$'\n'"Up: "${author}$'\n'"Quality: "${quality}$'\n'"Size: "${size}$'\n\n' | mutt -s "bilibili:下载失败" $mailAddress  #邮件
                             # curl -s -X POST "https://api.telegram.org/bot$telegram_bot_token/sendMessage" -d chat_id=$telegram_chat_id -d parse_mode=html -d text="<b>bilibili:下载失败</b>"
-                            continue
+                            break
                         fi
                     fi
                 done #& #如果是邮件通知，删除 & 和下面的内容(删到wait，fi保留)
