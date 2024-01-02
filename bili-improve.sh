@@ -143,7 +143,7 @@ for ((index = length - 1; index >= 0; index--)); do
                 message=""
                 # curl -s -X POST "https://api.telegram.org/bot$telegram_bot_token/sendMessage" -d chat_id=$telegram_chat_id -d parse_mode=html -d text="<b>bilibili:开始下载</b>%0A%0A$message"
                 #下载视频到指定位置（视频存储位置自行修改；you-get下载B站经常会出错，所以添加了出错重试代码）
-                count=1
+                count=0
                 echo "1" > "${scriptLocation}${cur_sec}mark.txt"
                 while true; do
                     echo $you -l -c "$scriptLocation"cookies.txt -o "$videoLocation$author/$title" $link
@@ -197,13 +197,13 @@ for ((index = length - 1; index >= 0; index--)); do
                         # curl -s -X POST "https://api.telegram.org/bot$telegram_bot_token/sendMessage" -d chat_id=$telegram_chat_id -d parse_mode=html -d text="<b>bilibili:上传完成</b>%0A%0A$title"
                         break
                     else
-                        if [ "$count" != "1" ]; then
+                        if [ $count -lt 3 ]; then
                             count=$(($count + 1))
                             sleep 2
                         else
                             rm -rf "$videoLocation$author/$title"
                             #发送通知
-                            echo "$title" | mutt -s "bilibili:下载失败" $mailAddress  #邮件
+                            echo "Title: "${title}$'\n'"Up: "${author}$'\n'"Quality: "${quality}$'\n'"Size: "${size}$'\n\n' | mutt -s "bilibili:下载失败" $mailAddress  #邮件
                             # curl -s -X POST "https://api.telegram.org/bot$telegram_bot_token/sendMessage" -d chat_id=$telegram_chat_id -d parse_mode=html -d text="<b>bilibili:下载失败</b>"
                             continue
                         fi
